@@ -19,11 +19,19 @@ void setup() {
     program = mapmem(BUS_TO_PHYS(ptr), 64);
 
     // copy code
+    // 0:   00 08                   ld r0,(r0)
+    // 2:   5a 00                   rts
+    // 4:   01 09                   st r1,(r0)
+    // 6:   5a 00                   rts
 
     program[0] = 0x00;
     program[1] = 0x08;
     program[2] = 0x5a;
     program[3] = 0x00;
+    program[4] = 0x01;
+    program[5] = 0x09;
+    program[6] = 0x5a;
+    program[7] = 0x00;
 }
 
 
@@ -37,6 +45,11 @@ void cleanup() {
 
 unsigned readmem(unsigned phys) {
     return execute_code(mbox, ptr, phys, 0, 0, 0, 0, 0);
+}
+
+
+void writemem(unsigned phys, unsigned value) {
+    execute_code(mbox, ptr+4, phys, value, 0, 0, 0, 0);
 }
 
 
